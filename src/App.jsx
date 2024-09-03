@@ -12,22 +12,16 @@ export default function App() {
     return Math.floor(guessThisWord.length * Math.random());
   }
 
-  useEffect(() => {
-    console.log("use effect has ran!");
-  }, []);
-
   function handleClick() {
     if (randomIndexes.length === guessThisWord.length) {
       alert("Congrats!!");
       return;
     }
-    let refIndex = generateRandomIndex();
-
-    while (randomIndexes.includes(refIndex)) {
-      console.log("regenerating refIndex ok?", refIndex);
+    let refIndex;
+    do {
       refIndex = generateRandomIndex();
-    }
-    console.log(`The refIndex is ${refIndex}`);
+      console.log(`The refIndex is ${refIndex}`);
+    } while (randomIndexes.includes(refIndex));
 
     setRandomIndexes((prev) => [...prev, refIndex]);
     setGuessThisWord((prevGuess) => {
