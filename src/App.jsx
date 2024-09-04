@@ -2,38 +2,42 @@ import { useState, useEffect } from "react";
 import "./App.css";
 import { data } from "./assets/Data.js";
 
-//NEXT: Figure out how to log an alert once words are done
+// Create form for sending answer
 
 export default function App() {
   const [attempt, setAttempt] = useState(0);
-  const [word, setWord] = useState(data[attempt].Answer);
+  const [word, setWord] = useState(data[0].Answer);
+  const [question, setQuestion] = useState(data[0].Question);
   const [guessThisWord, setGuessThisWord] = useState(
     word.split("").map(() => "_ ")
   );
   const [randomIndexes, setRandomIndexes] = useState([]);
+  console.log(`data length is ${data.length} and attempt is ${attempt}`);
 
   function generateRandomIndex() {
     return Math.floor(guessThisWord.length * Math.random());
   }
 
   useEffect(() => {
-    if (attempt <= data.length - 1) {
-      const newWord = data[attempt].Answer;
-      setWord(newWord);
-      setGuessThisWord(newWord.split("").map(() => "_ "));
-      setRandomIndexes([]);
-      console.log(`The new word is ${word} and attempt is ${attempt}`);
-    } else {
-      console.log("All questions exhausted");
-      return alert("All questions are exhausted");
-    }
+    const newWord = data[attempt].Answer;
+    const newQuestion = data[attempt].Question;
+    setWord(newWord);
+    setQuestion(newQuestion);
+    setGuessThisWord(newWord.split("").map(() => "_ "));
+    setRandomIndexes([]);
+    console.log(`The new word is ${newWord} and attempt is ${attempt}`);
+    return;
   }, [attempt]);
 
   function handleClick() {
     if (randomIndexes.length === guessThisWord.length) {
-      console.log(attempt);
-      return setAttempt((prev) => prev + 1);
+      if (attempt < data.length - 1) {
+        return setAttempt((prev) => prev + 1);
+      } else {
+        return alert("All questions have been exhausted");
+      }
     }
+
     let refIndex;
 
     do {
@@ -51,7 +55,7 @@ export default function App() {
 
   return (
     <>
-      <h2>{data[attempt].Question}</h2>
+      <h2>{question}</h2>
       <h3>{guessThisWord.join("")}</h3>
       <button onClick={handleClick}>Send</button>
     </>
