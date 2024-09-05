@@ -40,3 +40,21 @@
 .read-the-docs {
   color: #888;
 }
+
+.form--guess {
+  display: grid;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto;
+  gap: 0.25rem;
+  padding: 1rem;
+}
+
+.input--guess {
+  background-color: white;
+  padding: 12px;
+  border-radius: 10px; /* Rounded corners */
+  border: 1px solid darkgoldenrod;
+  color: black;
+  width: 15rem;
+}

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import "./App.css";
 import { data } from "./assets/Data.js";
+import GuessForm from "./components/GuessForm.jsx";
 
 // Create form for sending answer
 
@@ -29,13 +30,22 @@ export default function App() {
     return;
   }, [attempt]);
 
-  function handleClick() {
-    if (randomIndexes.length === guessThisWord.length) {
-      if (attempt < data.length - 1) {
-        return setAttempt((prev) => prev + 1);
-      } else {
-        return alert("All questions have been exhausted");
+  function moveToNextQuestion() {
+    if (attempt < data.length - 1) {
+      setAttempt((prev) => prev + 1);
+    }
+  }
+
+  function handleClick(guess) {
+    if (guess != word) {
+      if (randomIndexes.length === guessThisWord.length) {
+        moveToNextQuestion();
+        return;
       }
+    } else {
+      alert("Well done!");
+      moveToNextQuestion();
+      return;
     }
 
     let refIndex;
@@ -57,7 +67,7 @@ export default function App() {
     <>
       <h2>{question}</h2>
       <h3>{guessThisWord.join("")}</h3>
-      <button onClick={handleClick}>Send</button>
+      <GuessForm handleClick={handleClick} />
     </>
   );
 }
