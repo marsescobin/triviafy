@@ -50,6 +50,11 @@
   padding: 1rem;
 }
 
+.label--topic {
+  display: flex;
+  font-weight: 600;
+}
+
 .input--guess {
   background-color: white;
   padding: 12px;

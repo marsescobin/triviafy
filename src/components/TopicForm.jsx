@@ -1,9 +1,9 @@
 import { useState } from "react";
 import "../App.css";
 
-export default function GuessForm({ handleClick, question, guessThisWord }) {
+export default function TopicForm({ handleSelect }) {
   const [formData, setFormData] = useState({
-    guess: "",
+    topic: "",
   });
 
   function handleChange(e) {
@@ -16,19 +16,21 @@ export default function GuessForm({ handleClick, question, guessThisWord }) {
 
   function handleSubmit(e) {
     e.preventDefault();
-    handleClick(formData.guess);
+    handleSelect(formData.topic);
   }
-
   return (
-    <form onSubmit={handleSubmit} className="form--guess">
-      <h2>{question}</h2>
-      <h3>{guessThisWord}</h3>
+    <form onSubmit={handleSubmit} className="form-guess">
+      <label htmlFor="topic" className="label--topic">
+        <h2>What topic would you like to be quizzed on?</h2>
+      </label>
       <input
         className="input--guess"
-        name="guess"
         onChange={handleChange}
-        value={formData.guess}
-        placeholder="Enter your answer"
+        type="text"
+        name="topic"
+        id="topic"
+        value={formData.topic}
+        placeholder="History of rock and roll"
       />
       <button>Submit</button>
     </form>
