@@ -1,16 +1,8 @@
 import { useState, useEffect } from "react";
 import "./App.css";
-import { data } from "./assets/Data.js";
 import GuessForm from "./components/GuessForm.jsx";
 import TopicForm from "./components/TopicForm.jsx";
-import { OpenAI } from "openai";
-import { zodResponseFormat } from "openai/helpers/zod.mjs";
 import { z } from "zod";
-
-const openai = new OpenAI({
-  apiKey: import.meta.env.VITE_OPENAI_API_KEY,
-  dangerouslyAllowBrowser: true,
-});
 
 // Make a call to openAI trying to get a bunch of questions and answers
 
@@ -51,36 +43,33 @@ export default function App() {
     }
   }, [attempt, trivia]);
 
-  const TriviaSchema = z.object({
-    triviaList: z.array(
-      z.object({
-        Question: z.string(),
-        Answer: z.string(),
-      })
-    ),
-  });
-
   async function fetchData(topicSelected) {
+    const messages = [
+      {
+        role: "system",
+        content:
+          "You are a trivia master that outputs a list of trivias in JSON format. A trivia must have a Question and Answer pair. The answer needs to be one to a few words only with no punctuation marks",
+      },
+      {
+        role: "user",
+        content: `Get me 5 trivias about ${topicSelected}`,
+      },
+    ];
     try {
-      const response = await openai.chat.completions.create({
-        model: "gpt-4o-2024-08-06",
-        messages: [
-          {
-            role: "system",
-            content: `You are a trivia master that outputs a list of trivias in JSON format.
-              A trivia must have a Question and Answer pair. The answer needs to be one to a few words only with no punctuation marks`,
-          },
-          {
-            role: "user",
-            content: `Get me 5 trivias about ${topicSelected}`,
-          },
-        ],
-        response_format: zodResponseFormat(TriviaSchema, "triviaList"),
-        max_tokens: 300,
+      const url = "https://openai-api-worker.marsescobin.workers.dev/";
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(messages),
       });
-      const triviaListObject = JSON.parse(response.choices[0].message.content);
+      const dataFromOpenAI = await response.json();
+      const triviaListObject = JSON.parse(
+        dataFromOpenAI.choices[0].message.content
+      ); // Parse the JSON string
+      console.log("triviaListObject", triviaListObject);
       setTrivia(triviaListObject.triviaList);
-      console.log(trivia);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
