@@ -278,4 +278,7 @@ GuessForm.propTypes = {
   word: PropTypes.string.isRequired,
   onCorrectAnswer: PropTypes.func,
   onRanOutOfHearts: PropTypes.func,
+  isAlive: PropTypes.bool.isRequired,
+  isBreaking: PropTypes.bool.isRequired,
+  delay: PropTypes.number,
 };

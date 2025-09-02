@@ -65,7 +65,16 @@ export default function Home() {
 
       {/* Footer */}
       <footer className="footer">
-        <p>Made by Mars</p>
+        <p>
+          Made by Mars |{" "}
+          <a
+            href="https://buymeacoffee.com/marsescobin"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Buy me ice cream
+          </a>
+        </p>
       </footer>
     </div>
   );
