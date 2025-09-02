@@ -22,6 +22,8 @@ export default function Play() {
   // Add lives state
   const [totalLives, setTotalLives] = useState(0);
   const [remainingLives, setRemainingLives] = useState(0);
+  const [score, setScore] = useState({ correct: 0, total: 0 });
+  const [allQuestionsComplete, setAllQuestionsComplete] = useState(false);
 
   // Calculate lives when word changes
   useEffect(() => {
@@ -187,7 +189,8 @@ export default function Play() {
     if (attempt < trivia.length - 1) {
       setAttempt((prev) => prev + 1);
     } else {
-      alert("All questions exhausted");
+      // All questions completed - show end game screen
+      setAllQuestionsComplete(true);
     }
   }
 
@@ -237,6 +240,48 @@ export default function Play() {
     // For example: show a game over modal, reset the game, etc.
   }
 
+  function handleCorrectAnswer() {
+    setScore((prev) => ({
+      ...prev,
+      correct: prev.correct + 1,
+      total: prev.total + 1,
+    }));
+  }
+
+  function handleRanOutOfHearts() {
+    setScore((prev) => ({ ...prev, total: prev.total + 1 }));
+  }
+
+  function resetGame() {
+    setScore({ correct: 0, total: 0 });
+    setAllQuestionsComplete(false);
+    setAttempt(0);
+  }
+
+  function chooseNewTopic() {
+    resetGame();
+    setTopic("");
+    setTrivia(null);
+  }
+
+  function getScoreMessage(correct, total) {
+    const percentage = (correct / total) * 100;
+
+    if (percentage === 100) {
+      return { emoji: "🏆", message: "Perfect Score!" };
+    } else if (percentage >= 90) {
+      return { emoji: "🧠", message: "Knowledge Master!" };
+    } else if (percentage >= 75) {
+      return { emoji: "⭐", message: "Trivia Star!" };
+    } else if (percentage >= 60) {
+      return { emoji: "🎯", message: "Well Done!" };
+    } else if (percentage >= 40) {
+      return { emoji: "📚", message: "Keep Learning!" };
+    } else {
+      return { emoji: "💪", message: "Don't Give Up!" };
+    }
+  }
+
   return (
     <div className="play-page">
       <Navigation isPlaying={true} />
@@ -270,6 +315,33 @@ export default function Play() {
               </button>
             </div>
           </div>
+        ) : allQuestionsComplete ? (
+          <div className="game-complete-container">
+            {(() => {
+              const { emoji, message } = getScoreMessage(
+                score.correct,
+                score.total
+              );
+              return (
+                <>
+                  <h2>
+                    {emoji} {message}
+                  </h2>
+                  <p>
+                    You got {score.correct}/{score.total} right on {topic}!
+                  </p>
+                </>
+              );
+            })()}
+            <div className="completion-buttons">
+              <button onClick={resetGame} className="next-question-btn">
+                Play Again
+              </button>
+              <button onClick={chooseNewTopic} className="next-question-btn">
+                New Topic
+              </button>
+            </div>
+          </div>
         ) : topic ? (
           <GuessForm
             handleClick={handleClick}
@@ -280,6 +352,8 @@ export default function Play() {
             onGameOver={handleGameOver}
             onNextQuestion={moveToNextQuestion}
             word={word} // Add word prop
+            onCorrectAnswer={handleCorrectAnswer}
+            onRanOutOfHearts={handleRanOutOfHearts}
           />
         ) : (
           <TopicForm handleSelect={handleSelect} />

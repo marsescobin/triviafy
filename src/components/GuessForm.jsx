@@ -30,6 +30,8 @@ export default function GuessForm({
   remainingLives,
   onNextQuestion,
   word,
+  onCorrectAnswer,
+  onRanOutOfHearts,
 }) {
   const [formData, setFormData] = useState({
     guess: "",
@@ -63,6 +65,11 @@ export default function GuessForm({
       console.log("Hearts reached 0, triggering ran out of hearts");
       setShowRanOutOfHearts(true);
       revealFullAnswer();
+
+      // Track ran out of hearts
+      if (onRanOutOfHearts) {
+        onRanOutOfHearts();
+      }
     }
   }, [remainingLives, showRanOutOfHearts, showCelebration]);
 
@@ -119,6 +126,11 @@ export default function GuessForm({
         setShowCelebration(true);
         setShowConfetti(true);
         revealFullAnswer();
+
+        // Track correct answer
+        if (onCorrectAnswer) {
+          onCorrectAnswer();
+        }
       } else {
         // Wrong guess, but not game over yet
         setFormData({ guess: "" });
@@ -226,9 +238,7 @@ export default function GuessForm({
       ) : showRanOutOfHearts ? (
         <div className="ran-out-of-hearts-container">
           <h3 className="ran-out-message">Ran out of hearts!</h3>
-          <p className="answer-message">
-            The answer was: <strong>{word}</strong>
-          </p>
+          <p className="answer-message">The answer was: {word}</p>
           <button
             type="button"
             className="next-question-btn"
@@ -266,4 +276,6 @@ GuessForm.propTypes = {
   onGameOver: PropTypes.func,
   onNextQuestion: PropTypes.func.isRequired,
   word: PropTypes.string.isRequired,
+  onCorrectAnswer: PropTypes.func,
+  onRanOutOfHearts: PropTypes.func,
 };

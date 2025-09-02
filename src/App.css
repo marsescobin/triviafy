@@ -1249,6 +1249,90 @@ body {
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
 }
 
+/* Game Complete / Knowledge Master styling */
+.game-complete-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  padding: 3rem 2rem;
+  text-align: center;
+  border-radius: 20px;
+  margin: 2rem auto;
+  max-width: 500px;
+  border: 2px solid #222222;
+}
+
+.game-complete-container h2 {
+  font-size: 3rem;
+  font-weight: 800;
+  color: #222222;
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+.game-complete-container p {
+  font-size: 1.4rem;
+  color: #444;
+  margin: 0;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.completion-buttons {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.completion-buttons .next-question-btn {
+  background-color: #222222;
+  color: white;
+  padding: 1rem 2rem;
+  border: none;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  min-width: 140px;
+}
+
+.completion-buttons .next-question-btn:hover {
+  background-color: #444;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+}
+
+/* Responsive game complete */
+@media (max-width: 768px) {
+  .game-complete-container {
+    padding: 2rem 1.5rem;
+    margin: 1rem;
+    gap: 1.5rem;
+  }
+
+  .game-complete-container h2 {
+    font-size: 2.5rem;
+  }
+
+  .game-complete-container p {
+    font-size: 1.2rem;
+  }
+
+  .completion-buttons {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .completion-buttons .next-question-btn {
+    width: 100%;
+    padding: 1.2rem 2rem;
+  }
+}
+
 /* Responsive celebration */
 @media (max-width: 768px) {
   .celebration-message {
