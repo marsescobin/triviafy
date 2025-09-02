@@ -3,58 +3,7 @@ import Navigation from "../components/Navigation.jsx";
 import GuessForm from "../components/GuessForm.jsx";
 import TopicForm from "../components/TopicForm.jsx";
 import "../App.css";
-
-// Mock trivia data for testing
-const MOCK_TRIVIA = {
-  history: [
-    {
-      Question: "Who was the first President of the United States?",
-      Answer: "George Washington",
-    },
-    { Question: "In what year did World War II end?", Answer: "1945" },
-    {
-      Question: "What ancient wonder was located in Alexandria?",
-      Answer: "Lighthouse",
-    },
-    {
-      Question: "Who discovered America in 1492?",
-      Answer: "Christopher Columbus",
-    },
-    {
-      Question: "What empire was ruled by Julius Caesar?",
-      Answer: "Roman Empire",
-    },
-  ],
-  science: [
-    { Question: "What is the chemical symbol for gold?", Answer: "Au" },
-    { Question: "What planet is known as the Red Planet?", Answer: "Mars" },
-    {
-      Question: "What is the hardest natural substance on Earth?",
-      Answer: "Diamond",
-    },
-    {
-      Question: "What gas do plants absorb from the air?",
-      Answer: "Carbon Dioxide",
-    },
-    {
-      Question: "What is the largest organ in the human body?",
-      Answer: "Skin",
-    },
-  ],
-  sports: [
-    {
-      Question: "What sport is known as the beautiful game?",
-      Answer: "Soccer",
-    },
-    { Question: "How many players are on a basketball team?", Answer: "Five" },
-    { Question: "What country has won the most World Cups?", Answer: "Brazil" },
-    { Question: "What is the national sport of Japan?", Answer: "Sumo" },
-    {
-      Question: "In what year was the first modern Olympics held?",
-      Answer: "1896",
-    },
-  ],
-};
+import { motion } from "motion/react";
 
 export default function Play() {
   const [trivia, setTrivia] = useState();
@@ -66,6 +15,51 @@ export default function Play() {
     word.split("").map(() => "_ ")
   );
   const [randomIndexes, setRandomIndexes] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  // Add error state
+  const [error, setError] = useState(null);
+
+  // Loading phrases
+  const loadingPhrases = [
+    `Crafting brain-bending questions about ${topic.toLowerCase()}...`,
+    `Summoning trivia magic for ${topic.toLowerCase()}...`,
+    `Brewing up some ${topic.toLowerCase()} knowledge...`,
+    `AI is cooking up ${topic.toLowerCase()} questions...`,
+  ];
+
+  const [currentPhrase, setCurrentPhrase] = useState(0);
+
+  // Loading animation letters
+  const loadingLetters = [
+    { letter: "L", delay: 0 },
+    { letter: "O", delay: 0.1 },
+    { letter: "A", delay: 0.2 },
+    { letter: "D", delay: 0.3 },
+    { letter: "I", delay: 0.4 },
+    { letter: "N", delay: 0.5 },
+    { letter: "G", delay: 0.6 },
+  ];
+
+  const renderLoadingLetter = ({ letter, delay }, index) => (
+    <motion.span
+      key={index}
+      className="loading-letter-tile"
+      animate={{
+        y: [0, -20, 0],
+        scale: [1, 1.1, 1],
+        rotate: [0, 5, -5, 0],
+      }}
+      transition={{
+        duration: 1.2,
+        repeat: Infinity,
+        repeatDelay: 1,
+        delay,
+        ease: "easeInOut",
+      }}
+    >
+      {letter}
+    </motion.span>
+  );
 
   function generateRandomIndex() {
     return Math.floor(guessThisWord.length * Math.random());
@@ -105,40 +99,69 @@ export default function Play() {
   }, [attempt, trivia]);
 
   async function fetchData(topicSelected) {
-    // Use mock data instead of API call
-    console.log("Fetching mock data for topic:", topicSelected);
+    const apiUrl = import.meta.env.VITE_API_URL;
+    console.log("the api url is", apiUrl);
+    setIsLoading(true);
+    setCurrentPhrase(0);
+    setError(null); // Clear any previous errors
 
-    // Find relevant trivia based on topic
-    let triviaList = [];
+    try {
+      // Call your AI service with topic and count parameters
+      const response = await fetch(
+        `${apiUrl}/generate-trivia-set?topic=${encodeURIComponent(
+          topicSelected
+        )}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
-    // Check if topic matches any of our mock categories
-    const topicLower = topicSelected.toLowerCase();
-    if (
-      topicLower.includes("history") ||
-      topicLower.includes("president") ||
-      topicLower.includes("war")
-    ) {
-      triviaList = MOCK_TRIVIA.history;
-    } else if (
-      topicLower.includes("science") ||
-      topicLower.includes("chemical") ||
-      topicLower.includes("planet")
-    ) {
-      triviaList = MOCK_TRIVIA.science;
-    } else if (
-      topicLower.includes("sport") ||
-      topicLower.includes("game") ||
-      topicLower.includes("olympic")
-    ) {
-      triviaList = MOCK_TRIVIA.sports;
-    } else {
-      // Default to history if no specific match
-      triviaList = MOCK_TRIVIA.history;
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log("AI-generated trivia response:", data);
+
+      // Transform the AI response to match your app's expected format
+      const triviaList = data.questions.map((q) => ({
+        Question: q.question,
+        Answer: q.answer,
+      }));
+
+      console.log("Transformed trivia:", triviaList);
+      setTrivia(triviaList);
+    } catch (error) {
+      console.error("Error fetching trivia from AI service:", error);
+
+      // Show error instead of fallback
+      setError(
+        `Failed to generate trivia for "${topicSelected}". Please check your AI service and try again.`
+      );
+    } finally {
+      setIsLoading(false);
     }
-
-    console.log("Mock trivia found:", triviaList);
-    setTrivia(triviaList);
   }
+
+  // Add function to retry
+  function handleRetry() {
+    setError(null);
+    fetchData(topic);
+  }
+
+  // Cycle through loading phrases
+  useEffect(() => {
+    if (!isLoading) return;
+
+    const interval = setInterval(() => {
+      setCurrentPhrase((prev) => (prev + 1) % loadingPhrases.length);
+    }, 1500); // Change phrase every 1.5 seconds
+
+    return () => clearInterval(interval);
+  }, [isLoading, loadingPhrases.length]);
 
   function moveToNextQuestion() {
     if (attempt < trivia.length - 1) {
@@ -149,7 +172,11 @@ export default function Play() {
   }
 
   function handleClick(guess) {
-    if (guess != word) {
+    // Normalize both guess and word for comparison (case-insensitive)
+    const normalizedGuess = guess.toLowerCase().trim();
+    const normalizedWord = word.toLowerCase().trim();
+
+    if (normalizedGuess !== normalizedWord) {
       if (randomIndexes.length === guessThisWord.length) {
         moveToNextQuestion();
         return;
@@ -159,6 +186,7 @@ export default function Play() {
       moveToNextQuestion();
       return;
     }
+
     let refIndex;
     do {
       refIndex = generateRandomIndex();
@@ -183,7 +211,35 @@ export default function Play() {
       <Navigation isPlaying={true} />
 
       <main className="game-content">
-        {topic ? (
+        {isLoading ? (
+          <div className="loading-container">
+            <div className="loading-animation">
+              <div className="loading-letters">
+                {loadingLetters.map(renderLoadingLetter)}
+              </div>
+            </div>
+            <motion.p
+              className="loading-text"
+              key={currentPhrase}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.5 }}
+            >
+              {loadingPhrases[currentPhrase]}
+            </motion.p>
+          </div>
+        ) : error ? (
+          <div className="error-container">
+            <h2>Oops! Something went wrong</h2>
+            <p>{error}</p>
+            <div className="error-buttons">
+              <button onClick={handleRetry} className="retry-btn">
+                Try Again
+              </button>
+            </div>
+          </div>
+        ) : topic ? (
           <GuessForm
             handleClick={handleClick}
             question={question}

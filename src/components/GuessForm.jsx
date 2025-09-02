@@ -17,7 +17,12 @@ export default function GuessForm({ handleClick, question, guessThisWord }) {
 
   function handleSubmit(e) {
     e.preventDefault();
-    handleClick(formData.guess);
+    const guess = formData.guess.trim(); // Trim whitespace
+    if (guess) {
+      handleClick(guess);
+      // Clear the input field after submission
+      setFormData({ guess: "" });
+    }
   }
 
   return (
@@ -57,6 +62,7 @@ export default function GuessForm({ handleClick, question, guessThisWord }) {
         onChange={handleChange}
         value={formData.guess}
         placeholder="Enter your answer"
+        autoFocus // Auto-focus for better UX
       />
       <button>Submit</button>
     </form>

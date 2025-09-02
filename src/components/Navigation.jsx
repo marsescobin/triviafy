@@ -1,10 +1,17 @@
 import { Link, useLocation } from "react-router-dom";
 import PropTypes from "prop-types";
+import { useAuth } from "../contexts/AuthContext";
 import "../App.css";
 
 export default function Navigation({ isPlaying = false }) {
   const location = useLocation();
+  const { user, signOut } = useAuth();
   const isHomePage = location.pathname === "/";
+
+  const handleSignOut = async () => {
+    await signOut();
+    window.location.href = "/";
+  };
 
   return (
     <header className="header">
@@ -18,9 +25,19 @@ export default function Navigation({ isPlaying = false }) {
             Play
           </Link>
         )}
-        <Link to="/login" className="nav-link">
-          Sign In
-        </Link>
+
+        {user ? (
+          <div className="nav-user">
+            <span className="user-email">{user.email}</span>
+            <button onClick={handleSignOut} className="nav-link sign-out-btn">
+              Sign Out
+            </button>
+          </div>
+        ) : (
+          <Link to="/login" className="nav-link">
+            Sign In
+          </Link>
+        )}
       </nav>
     </header>
   );
