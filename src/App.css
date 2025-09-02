@@ -307,6 +307,27 @@ body {
   transform: scale(1.05);
 }
 
+/* Punctuation tiles */
+.punctuation-tile {
+  background-color: #646cff;
+  color: white;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 1.8rem;
+  border-radius: 8px;
+  border: 3px solid #646cff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease;
+}
+
+.punctuation-tile:hover {
+  transform: scale(1.05);
+}
+
 /* Empty letter tiles for word guessing game */
 .letter-tile-empty {
   background-color: #222222;

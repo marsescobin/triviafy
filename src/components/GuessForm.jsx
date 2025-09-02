@@ -7,6 +7,11 @@ export default function GuessForm({ handleClick, question, guessThisWord }) {
     guess: "",
   });
 
+  // Helper function to detect punctuation
+  function isPunctuation(char) {
+    return /[.,!?;:'"()[\]{}]/.test(char);
+  }
+
   function handleChange(e) {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -44,6 +49,15 @@ export default function GuessForm({ handleClick, question, guessThisWord }) {
             return (
               <span key={index} className="letter-tile">
                 {/* Empty tile - no text */}
+              </span>
+            );
+          }
+
+          // Check if this is punctuation
+          if (isPunctuation(letter)) {
+            return (
+              <span key={index} className="punctuation-tile">
+                {/* Empty tile - punctuation to be guessed */}
               </span>
             );
           }
