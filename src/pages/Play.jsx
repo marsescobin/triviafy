@@ -19,6 +19,26 @@ export default function Play() {
   // Add error state
   const [error, setError] = useState(null);
 
+  // Add lives state
+  const [totalLives, setTotalLives] = useState(0);
+  const [remainingLives, setRemainingLives] = useState(0);
+
+  // Calculate lives when word changes
+  useEffect(() => {
+    if (word) {
+      // Count unique letters, excluding punctuation and spaces
+      const uniqueLetters = new Set(
+        word
+          .toLowerCase()
+          .replace(/[.,!?;:'"()[\]{}-]/g, "") // Remove punctuation
+          .replace(/\s/g, "") // Remove spaces
+      ).size;
+
+      setTotalLives(uniqueLetters);
+      setRemainingLives(uniqueLetters);
+    }
+  }, [word]);
+
   // Loading phrases
   const loadingPhrases = [
     `Crafting brain-bending questions about ${topic.toLowerCase()}...`,
@@ -177,14 +197,16 @@ export default function Play() {
     const normalizedWord = word.toLowerCase().trim();
 
     if (normalizedGuess !== normalizedWord) {
+      // Wrong guess - decrease lives
+      setRemainingLives((prev) => prev - 1);
+
       if (randomIndexes.length === guessThisWord.length) {
         moveToNextQuestion();
-        return;
+        return false; // Return false for wrong guess
       }
     } else {
-      alert("Well done!");
-      moveToNextQuestion();
-      return;
+      // Correct guess - no lives lost, don't auto-advance
+      return true; // Return true for correct guess
     }
 
     let refIndex;
@@ -196,14 +218,23 @@ export default function Play() {
     setRandomIndexes((prev) => [...prev, refIndex]);
     setGuessThisWord((prevGuess) => {
       const updatedGuess = [...prevGuess];
-      updatedGuess[refIndex] = word[refIndex].toUpperCase(); // Capitalize the revealed letter
+      updatedGuess[refIndex] = word[refIndex].toUpperCase();
       return updatedGuess;
     });
+
+    return false; // Return false for wrong guess
   }
 
   function handleSelect(data) {
     console.log(data);
     setTopic(data);
+  }
+
+  // Add game over handler
+  function handleGameOver() {
+    console.log("Game Over! No more lives left.");
+    // You can add game over logic here
+    // For example: show a game over modal, reset the game, etc.
   }
 
   return (
@@ -244,6 +275,11 @@ export default function Play() {
             handleClick={handleClick}
             question={question}
             guessThisWord={guessThisWord}
+            totalLives={totalLives}
+            remainingLives={remainingLives}
+            onGameOver={handleGameOver}
+            onNextQuestion={moveToNextQuestion}
+            word={word} // Add word prop
           />
         ) : (
           <TopicForm handleSelect={handleSelect} />

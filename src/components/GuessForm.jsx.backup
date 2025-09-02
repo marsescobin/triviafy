@@ -41,7 +41,6 @@ export default function GuessForm({
   const [celebrationMessage, setCelebrationMessage] = useState("");
   const [revealedWord, setRevealedWord] = useState(guessThisWord);
   const wordTilesRef = useRef(null);
-  const [showRanOutOfHearts, setShowRanOutOfHearts] = useState(false);
 
   // Update revealedWord whenever guessThisWord changes (for wrong guesses)
   useEffect(() => {
@@ -54,17 +53,7 @@ export default function GuessForm({
     setCelebrationMessage("");
     setShowConfetti(false);
     setFormData({ guess: "" });
-    setShowRanOutOfHearts(false);
   }, [question]);
-
-  // Detect when hearts run out
-  useEffect(() => {
-    if (remainingLives <= 1 && !showRanOutOfHearts && !showCelebration) {
-      console.log("Hearts reached 0, triggering ran out of hearts");
-      setShowRanOutOfHearts(true);
-      revealFullAnswer();
-    }
-  }, [remainingLives, showRanOutOfHearts, showCelebration]);
 
   // Helper function to detect punctuation
   function isPunctuation(char) {
@@ -111,6 +100,13 @@ export default function GuessForm({
       console.log("Calling handleClick with guess:", guess);
       const isCorrect = handleClick(guess);
 
+      // Check if hearts reached 0 after this guess
+      if (remainingLives <= 1 && !isCorrect) {
+        console.log("Hearts will reach 0, triggering game over");
+        // Don't process further, let the Hearts component handle game over
+        return;
+      }
+
       if (isCorrect) {
         // Show celebration
         const randomMessage =
@@ -134,13 +130,6 @@ export default function GuessForm({
     setShowCelebration(false);
     setCelebrationMessage("");
     setRevealedWord(guessThisWord); // Reset to current guessThisWord
-    if (onNextQuestion) {
-      onNextQuestion();
-    }
-  }
-
-  function handleNextQuestionAfterHeartsOut() {
-    setShowRanOutOfHearts(false);
     if (onNextQuestion) {
       onNextQuestion();
     }
@@ -211,7 +200,7 @@ export default function GuessForm({
         }
       />
 
-      {/* Show celebration, ran out of hearts, or input form */}
+      {/* Show celebration or input form */}
       {showCelebration ? (
         <div className="celebration-container">
           <h3 className="celebration-message">{celebrationMessage}</h3>
@@ -219,20 +208,6 @@ export default function GuessForm({
             type="button"
             className="next-question-btn"
             onClick={handleNextQuestion}
-          >
-            Next Question
-          </button>
-        </div>
-      ) : showRanOutOfHearts ? (
-        <div className="ran-out-of-hearts-container">
-          <h3 className="ran-out-message">Ran out of hearts!</h3>
-          <p className="answer-message">
-            The answer was: <strong>{word}</strong>
-          </p>
-          <button
-            type="button"
-            className="next-question-btn"
-            onClick={handleNextQuestionAfterHeartsOut}
           >
             Next Question
           </button>
@@ -246,9 +221,12 @@ export default function GuessForm({
             value={formData.guess}
             placeholder="Enter your answer"
             autoFocus
-            disabled={remainingLives <= 0}
+            disabled={remainingLives <= 0} // Disable when no hearts left
           />
-          <button type="submit" disabled={remainingLives <= 0}>
+          <button
+            type="submit"
+            disabled={remainingLives <= 0} // Disable when no hearts left
+          >
             Submit
           </button>
         </>

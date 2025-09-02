@@ -1098,3 +1098,204 @@ body {
     max-width: 200px;
   }
 }
+
+/* Hearts Component Styles */
+.hearts-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin: 1.5rem 0;
+  padding: 1rem;
+}
+
+.heart-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+}
+
+.heart-full {
+  font-size: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+.breaking-heart {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+}
+
+.heart-with-crack {
+  position: relative;
+  font-size: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.heart-crack-overlay {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.crack-line {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(45deg, #ff0000, #ff4444);
+  transform-origin: left center;
+  box-shadow: 0 0 4px rgba(255, 0, 0, 0.5);
+}
+
+.heart-pieces {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.heart-piece {
+  position: absolute;
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.heart-piece.left {
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.heart-piece.right {
+  right: 50%;
+  transform: translateX(50%);
+}
+
+/* Responsive hearts */
+@media (max-width: 768px) {
+  .hearts-container {
+    gap: 0.75rem;
+    margin: 1rem 0;
+  }
+
+  .heart-wrapper {
+    width: 35px;
+    height: 35px;
+  }
+
+  .heart-full,
+  .heart-with-crack {
+    font-size: 1.8rem;
+  }
+
+  .heart-piece {
+    font-size: 1.3rem;
+  }
+}
+
+/* Celebration Styles */
+.celebration-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  padding: 2rem;
+  text-align: center;
+}
+
+.celebration-message {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #222222;
+  margin: 0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.next-question-btn {
+  background-color: #222222;
+  color: white;
+  padding: 1.25rem 2.5rem;
+  border: none;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.next-question-btn:hover {
+  background-color: #444;
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+}
+
+/* Responsive celebration */
+@media (max-width: 768px) {
+  .celebration-message {
+    font-size: 2rem;
+  }
+
+  .next-question-btn {
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+  }
+}
+
+/* Ran out of hearts styling */
+.ran-out-of-hearts-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 2rem;
+  text-align: center;
+}
+
+.ran-out-message {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #e74c3c;
+  margin: 0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.answer-message {
+  color: #222222;
+  font-weight: 700;
+  font-size: 1.4rem;
+}
+
+/* Responsive ran out of hearts */
+@media (max-width: 768px) {
+  .ran-out-message {
+    font-size: 2rem;
+  }
+
+  .answer-message {
+    font-size: 1.1rem;
+  }
+
+  .answer-message strong {
+    font-size: 1.2rem;
+  }
+}
