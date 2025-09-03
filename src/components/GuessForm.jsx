@@ -159,7 +159,7 @@ export default function GuessForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="form--guess">
+    <form onSubmit={handleSubmit} className="form-guess">
       <h2>{question}</h2>
 
       {/* Hearts component - placed below question, above tiles */}

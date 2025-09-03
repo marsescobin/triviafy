@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import Navigation from "../components/Navigation.jsx";
 import GuessForm from "../components/GuessForm.jsx";
 import TopicForm from "../components/TopicForm.jsx";
+import { useAuth } from "../contexts/AuthContext";
+import { supabase } from "../lib/supabase";
 import "../App.css";
 import { motion } from "motion/react";
 
@@ -24,6 +26,12 @@ export default function Play() {
   const [remainingLives, setRemainingLives] = useState(0);
   const [score, setScore] = useState({ correct: 0, total: 0 });
   const [allQuestionsComplete, setAllQuestionsComplete] = useState(false);
+
+  // Add auth context
+  const { user } = useAuth();
+
+  // Add state to track individual question results
+  const [questionResults, setQuestionResults] = useState([]);
 
   // Calculate lives when word changes
   useEffect(() => {
@@ -191,6 +199,7 @@ export default function Play() {
     } else {
       // All questions completed - show end game screen
       setAllQuestionsComplete(true);
+      saveGameSession();
     }
   }
 
@@ -240,16 +249,100 @@ export default function Play() {
     // For example: show a game over modal, reset the game, etc.
   }
 
+  // Add function to save game session to database
+  async function saveGameSession() {
+    if (!user || !trivia) return; // Only save for logged-in users
+
+    try {
+      console.log("Saving game session...", { user: user.id, topic, score });
+
+      // Create game session
+      const { data: sessionData, error: sessionError } = await supabase
+        .from("game_sessions")
+        .insert([
+          {
+            user_id: user.id,
+            topic: topic,
+            total_questions: score.total,
+            correct_answers: score.correct,
+            score_percentage: (score.correct / score.total) * 100,
+            completed_at: new Date().toISOString(),
+          },
+        ])
+        .select()
+        .single();
+
+      if (sessionError) {
+        console.error("Error saving game session:", sessionError);
+        return;
+      }
+
+      console.log("Game session saved:", sessionData);
+
+      // Save individual questions
+      const questionsToInsert = trivia.map((q, index) => {
+        const questionResult = questionResults[index] || {
+          isCorrect: false,
+          userAnswer: null,
+          livesRemaining: 0,
+        };
+        return {
+          session_id: sessionData.id,
+          question_text: q.Question,
+          correct_answer: q.Answer,
+          user_answer: questionResult.userAnswer,
+          is_correct: questionResult.isCorrect,
+          lives_remaining: questionResult.livesRemaining,
+          question_order: index + 1,
+        };
+      });
+
+      const { error: questionsError } = await supabase
+        .from("game_questions")
+        .insert(questionsToInsert);
+
+      if (questionsError) {
+        console.error("Error saving game questions:", questionsError);
+      } else {
+        console.log("Game questions saved successfully!");
+      }
+    } catch (error) {
+      console.error("Error saving game:", error);
+    }
+  }
+
+  // Update handleCorrectAnswer to track question results
   function handleCorrectAnswer() {
     setScore((prev) => ({
       ...prev,
       correct: prev.correct + 1,
       total: prev.total + 1,
     }));
+
+    // Track this question result
+    setQuestionResults((prev) => [
+      ...prev,
+      {
+        isCorrect: true,
+        userAnswer: word,
+        livesRemaining: remainingLives,
+      },
+    ]);
   }
 
+  // Update handleRanOutOfHearts to track question results
   function handleRanOutOfHearts() {
     setScore((prev) => ({ ...prev, total: prev.total + 1 }));
+
+    // Track this question result
+    setQuestionResults((prev) => [
+      ...prev,
+      {
+        isCorrect: false,
+        userAnswer: null,
+        livesRemaining: 0,
+      },
+    ]);
   }
 
   function resetGame() {

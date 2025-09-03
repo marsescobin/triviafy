@@ -109,7 +109,11 @@ export default function Login() {
           {message && (
             <div
               className={`message ${
-                message.includes("Success") ? "success" : "error"
+                message.includes("Success") ||
+                message.includes("Check your email") ||
+                message.includes("OTP code")
+                  ? "success"
+                  : "error"
               }`}
             >
               {message}

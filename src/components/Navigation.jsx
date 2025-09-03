@@ -26,6 +26,13 @@ export default function Navigation({ isPlaying = false }) {
           </Link>
         )}
 
+        {/* Show History link for logged-in users */}
+        {user && !isPlaying && (
+          <Link to="/history" className="nav-link">
+            History
+          </Link>
+        )}
+
         {user ? (
           <div className="nav-user">
             <span className="user-email">{user.email}</span>
