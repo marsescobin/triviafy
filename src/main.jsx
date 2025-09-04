@@ -15,7 +15,19 @@ if (!POSTHOG_KEY) {
   console.warn(
     "⚠️ Missing PostHog key. Did you set VITE_PUBLIC_POSTHOG_KEY in Cloudflare Pages?"
   );
+} else {
+  posthog.capture("app_initialized", {
+    environment: import.meta.env.MODE,
+    timestamp: new Date().toISOString(),
+  });
 }
+
+console.log("PostHog initialized:", {
+  key: POSTHOG_KEY ? "✅ Present" : "❌ Missing",
+  host: POSTHOG_HOST,
+  mode: import.meta.env.MODE,
+  isInitialized: posthog.__loaded,
+});
 
 // Initialize PostHog manually
 posthog.init(POSTHOG_KEY, {
