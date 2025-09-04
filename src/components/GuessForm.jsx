@@ -237,7 +237,7 @@ export default function GuessForm({
         </div>
       ) : showRanOutOfHearts ? (
         <div className="ran-out-of-hearts-container">
-          <h3 className="ran-out-message">Ran out of hearts!</h3>
+          <h3 className="ran-out-message">Ran out of hearts!!</h3>
           <p className="answer-message">The answer was: {word}</p>
           <button
             type="button"
