@@ -5,11 +5,13 @@ import Home from "./pages/Home.jsx";
 import Play from "./pages/Play.jsx";
 import Login from "./pages/Login.jsx";
 import History from "./pages/History.jsx";
+import AnalyticsPageview from "./AnalyticsPageView.tsx";
 
 export default function App() {
   return (
     <AuthProvider>
       <Router>
+        <AnalyticsPageview />
         <div className="App">
           <Routes>
             <Route path="/" element={<Home />} />
