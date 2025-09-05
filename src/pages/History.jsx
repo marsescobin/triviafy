@@ -4,6 +4,32 @@ import { supabase } from "../lib/supabase";
 import Navigation from "../components/Navigation.jsx";
 import "../App.css";
 
+const getUserDisplayName = (user) => {
+  if (!user?.email) return "User";
+
+  const email = user.email;
+  const namePart = email.split("@")[0];
+
+  // Convert common patterns
+  if (namePart.includes(".")) {
+    return namePart
+      .split(".")
+      .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+      .join(" ");
+  }
+
+  // Handle underscores
+  if (namePart.includes("_")) {
+    return namePart
+      .split("_")
+      .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+      .join(" ");
+  }
+
+  // Default: capitalize first letter
+  return namePart.charAt(0).toUpperCase() + namePart.slice(1);
+};
+
 export default function History() {
   const { user } = useAuth();
   const [gameSessions, setGameSessions] = useState([]);
@@ -11,6 +37,8 @@ export default function History() {
   const [sessionQuestions, setSessionQuestions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isDetailsExpanded, setIsDetailsExpanded] = useState(false);
+  // Remove isQuestionsExpanded state - no longer needed
 
   useEffect(() => {
     if (user) {
@@ -53,8 +81,15 @@ export default function History() {
   }
 
   function handleSessionClick(session) {
-    setSelectedSession(session);
-    fetchSessionQuestions(session.id);
+    // If clicking the same session, toggle the details
+    if (selectedSession?.id === session.id) {
+      setIsDetailsExpanded(!isDetailsExpanded);
+    } else {
+      // If clicking a different session, select it and expand details
+      setSelectedSession(session);
+      setIsDetailsExpanded(true);
+      fetchSessionQuestions(session.id);
+    }
   }
 
   function formatDate(dateString) {
@@ -73,7 +108,7 @@ export default function History() {
     if (percentage >= 75) return "⭐";
     if (percentage >= 60) return "🎯";
     if (percentage >= 40) return "📚";
-    return "��";
+    return "";
   }
 
   if (!user) {
@@ -84,7 +119,8 @@ export default function History() {
           <div className="auth-required">
             <h2>Sign in to view your game history</h2>
             <p>
-              Your scores and game history will be saved when you're logged in.
+              Your scores and game history will be saved when you&apos;re logged
+              in.
             </p>
           </div>
         </main>
@@ -127,7 +163,7 @@ export default function History() {
       <Navigation isPlaying={false} />
 
       <main className="main-content">
-        <h1>Your Game History</h1>
+        <h1>{getUserDisplayName(user)}&apos;s Trivia History</h1>
 
         {gameSessions.length === 0 ? (
           <div className="no-history">
@@ -139,76 +175,59 @@ export default function History() {
             <div className="sessions-list">
               <h2>Recent Games</h2>
               {gameSessions.map((session) => (
-                <div
-                  key={session.id}
-                  className={`session-card ${
-                    selectedSession?.id === session.id ? "selected" : ""
-                  }`}
-                  onClick={() => handleSessionClick(session)}
-                >
-                  <div className="session-header">
-                    <span className="session-topic">{session.topic}</span>
-                    <span className="session-date">
-                      {formatDate(session.created_at)}
-                    </span>
+                <div key={session.id} className="session-wrapper">
+                  <div
+                    className={`session-card ${
+                      selectedSession?.id === session.id ? "selected" : ""
+                    }`}
+                    onClick={() => handleSessionClick(session)}
+                  >
+                    <div className="session-header">
+                      <span className="session-topic">{session.topic}</span>
+                      <span className="session-date">
+                        {formatDate(session.created_at)}
+                      </span>
+                    </div>
+                    <div className="session-score">
+                      <span className="score-emoji">
+                        {getScoreEmoji(session.score_percentage)}
+                      </span>
+                      <span className="score-text">
+                        {session.correct_answers}/{session.total_questions} (
+                        {session.score_percentage.toFixed(1)}%)
+                      </span>
+                    </div>
                   </div>
-                  <div className="session-score">
-                    <span className="score-emoji">
-                      {getScoreEmoji(session.score_percentage)}
-                    </span>
-                    <span className="score-text">
-                      {session.correct_answers}/{session.total_questions} (
-                      {session.score_percentage.toFixed(1)}%)
-                    </span>
-                  </div>
+
+                  {selectedSession?.id === session.id && isDetailsExpanded && (
+                    <div className="session-details">
+                      <div className="questions-list">
+                        <h4>
+                          Questions & Answers ({sessionQuestions.length}{" "}
+                          questions)
+                        </h4>
+
+                        {sessionQuestions.map((question, index) => (
+                          <div
+                            key={question.id}
+                            className={`question-item ${
+                              question.is_correct ? "correct" : "incorrect"
+                            }`}
+                          >
+                            <div className="question-text">
+                              {question.question_text}
+                            </div>
+                            <div className="question-answer">
+                              <strong>Answer:</strong> {question.correct_answer}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
-
-            {selectedSession && (
-              <div className="session-details">
-                <h3>Game Details: {selectedSession.topic}</h3>
-                <div className="session-summary">
-                  <p>Played on: {formatDate(selectedSession.created_at)}</p>
-                  <p>
-                    Score: {selectedSession.correct_answers}/
-                    {selectedSession.total_questions} (
-                    {selectedSession.score_percentage.toFixed(1)}%)
-                  </p>
-                </div>
-
-                <div className="questions-list">
-                  <h4>Questions & Answers</h4>
-                  {sessionQuestions.map((question, index) => (
-                    <div
-                      key={question.id}
-                      className={`question-item ${
-                        question.is_correct ? "correct" : "incorrect"
-                      }`}
-                    >
-                      <div className="question-header">
-                        <span className="question-number">Q{index + 1}</span>
-                        <span className="question-result">
-                          {question.is_correct ? "✅" : "❌"}
-                        </span>
-                      </div>
-                      <div className="question-text">
-                        {question.question_text}
-                      </div>
-                      <div className="question-answer">
-                        <strong>Answer:</strong> {question.correct_answer}
-                        {question.user_answer && (
-                          <span className="user-answer">
-                            <br />
-                            <strong>Your answer:</strong> {question.user_answer}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
           </div>
         )}
       </main>

@@ -32,6 +32,7 @@ export default function GuessForm({
   word,
   onCorrectAnswer,
   onRanOutOfHearts,
+  onRevealAnswer,
 }) {
   const [formData, setFormData] = useState({
     guess: "",
@@ -158,6 +159,13 @@ export default function GuessForm({
     }
   }
 
+  function handleRevealAnswer() {
+    // Call the parent's reveal answer function
+    if (onRevealAnswer) {
+      onRevealAnswer();
+    }
+  }
+
   return (
     <form onSubmit={handleSubmit} className="form-guess">
       <h2>{question}</h2>
@@ -258,9 +266,19 @@ export default function GuessForm({
             autoFocus
             disabled={remainingLives <= 0}
           />
-          <button type="submit" disabled={remainingLives <= 0}>
-            Submit
-          </button>
+          <div className="form-buttons">
+            <button type="submit" disabled={remainingLives <= 0}>
+              Submit
+            </button>
+            <button
+              type="button"
+              className="reveal-answer-btn"
+              onClick={handleRevealAnswer}
+              disabled={remainingLives <= 0}
+            >
+              Reveal Answer
+            </button>
+          </div>
         </>
       )}
     </form>
@@ -278,6 +296,7 @@ GuessForm.propTypes = {
   word: PropTypes.string.isRequired,
   onCorrectAnswer: PropTypes.func,
   onRanOutOfHearts: PropTypes.func,
+  onRevealAnswer: PropTypes.func,
   isAlive: PropTypes.bool.isRequired,
   isBreaking: PropTypes.bool.isRequired,
   delay: PropTypes.number,

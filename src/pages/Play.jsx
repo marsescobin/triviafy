@@ -135,6 +135,10 @@ export default function Play() {
     setCurrentPhrase(0);
     setError(null); // Clear any previous errors
 
+    // Reset game state when starting new trivia
+    resetGame();
+    setQuestionResults([]);
+
     try {
       // Call your AI service with topic and count parameters
       const response = await fetch(
@@ -194,6 +198,20 @@ export default function Play() {
   }, [isLoading, loadingPhrases.length]);
 
   function moveToNextQuestion() {
+    // Only track question results, don't modify score here
+    // The score should only be modified in handleCorrectAnswer and handleRanOutOfHearts
+    if (!questionResults[attempt]) {
+      setQuestionResults((prev) => {
+        const newResults = [...prev];
+        newResults[attempt] = {
+          isCorrect: true, // If we're moving to next question, they got it right
+          userAnswer: word,
+          livesRemaining: remainingLives,
+        };
+        return newResults;
+      });
+    }
+
     if (attempt < trivia.length - 1) {
       setAttempt((prev) => prev + 1);
     } else {
@@ -313,42 +331,84 @@ export default function Play() {
 
   // Update handleCorrectAnswer to track question results
   function handleCorrectAnswer() {
-    setScore((prev) => ({
-      ...prev,
-      correct: prev.correct + 1,
-      total: prev.total + 1,
-    }));
+    console.log(
+      "🎯 handleCorrectAnswer called - attempt:",
+      attempt,
+      "score before:",
+      score
+    );
+    setScore((prev) => {
+      const newScore = {
+        ...prev,
+        correct: prev.correct + 1,
+        // Don't increment total - it stays at 20 throughout the game
+      };
+      console.log("🎯 handleCorrectAnswer - new score:", newScore);
+      return newScore;
+    });
 
-    // Track this question result
-    setQuestionResults((prev) => [
-      ...prev,
-      {
+    // Track this question result at the correct index
+    setQuestionResults((prev) => {
+      const newResults = [...prev];
+      newResults[attempt] = {
         isCorrect: true,
         userAnswer: word,
         livesRemaining: remainingLives,
-      },
-    ]);
+      };
+      console.log(
+        "🎯 handleCorrectAnswer - questionResults updated for attempt:",
+        attempt
+      );
+      return newResults;
+    });
   }
 
   // Update handleRanOutOfHearts to track question results
   function handleRanOutOfHearts() {
-    setScore((prev) => ({ ...prev, total: prev.total + 1 }));
+    console.log(
+      "💔 handleRanOutOfHearts called - attempt:",
+      attempt,
+      "score before:",
+      score
+    );
+    // Don't increment total - it stays at 20 throughout the game
+    // Only correct answers increment the correct count
+    console.log(
+      "💔 handleRanOutOfHearts - score unchanged (total stays at 20)"
+    );
 
-    // Track this question result
-    setQuestionResults((prev) => [
-      ...prev,
-      {
+    // Track this question result at the correct index
+    setQuestionResults((prev) => {
+      const newResults = [...prev];
+      newResults[attempt] = {
         isCorrect: false,
         userAnswer: null,
         livesRemaining: 0,
-      },
-    ]);
+      };
+      console.log(
+        "💔 handleRanOutOfHearts - questionResults updated for attempt:",
+        attempt
+      );
+      return newResults;
+    });
+  }
+
+  // Add function to handle reveal answer
+  function handleRevealAnswer() {
+    // Set remaining lives to 0 to trigger hearts explosion
+    setRemainingLives(0);
+
+    // Call the existing ran out of hearts handler
+    handleRanOutOfHearts();
   }
 
   function resetGame() {
-    setScore({ correct: 0, total: 0 });
+    console.log("resetGame called - score before:", score);
+    setScore({ correct: 0, total: 20 }); // Set total to 20 (number of questions in game)
     setAllQuestionsComplete(false);
     setAttempt(0);
+    setQuestionResults([]);
+    console.log("resetGame complete - score reset to 0/20");
   }
 
   function chooseNewTopic() {
@@ -447,6 +507,7 @@ export default function Play() {
             word={word} // Add word prop
             onCorrectAnswer={handleCorrectAnswer}
             onRanOutOfHearts={handleRanOutOfHearts}
+            onRevealAnswer={handleRevealAnswer}
           />
         ) : (
           <TopicForm handleSelect={handleSelect} />

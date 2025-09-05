@@ -3,6 +3,32 @@ import PropTypes from "prop-types";
 import { useAuth } from "../contexts/AuthContext";
 import "../App.css";
 
+const getUserDisplayName = (user) => {
+  if (!user?.email) return "User";
+
+  const email = user.email;
+  const namePart = email.split("@")[0];
+
+  // Convert common patterns
+  if (namePart.includes(".")) {
+    return namePart
+      .split(".")
+      .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+      .join(" ");
+  }
+
+  // Handle underscores
+  if (namePart.includes("_")) {
+    return namePart
+      .split("_")
+      .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+      .join(" ");
+  }
+
+  // Default: capitalize first letter
+  return namePart.charAt(0).toUpperCase() + namePart.slice(1);
+};
+
 export default function Navigation({ isPlaying = false }) {
   const location = useLocation();
   const { user, signOut } = useAuth();
@@ -27,7 +53,7 @@ export default function Navigation({ isPlaying = false }) {
         )}
 
         {/* Show History link for logged-in users */}
-        {user && !isPlaying && (
+        {user && (
           <Link to="/history" className="nav-link">
             History
           </Link>
@@ -35,7 +61,6 @@ export default function Navigation({ isPlaying = false }) {
 
         {user ? (
           <div className="nav-user">
-            <span className="user-email">{user.email}</span>
             <button onClick={handleSignOut} className="nav-link sign-out-btn">
               Sign Out
             </button>

@@ -21,7 +21,7 @@ if (!POSTHOG_KEY) {
     api_host: POSTHOG_HOST,
     capture_pageview: true,
     capture_pageleave: true,
-    debug: import.meta.env.MODE === "development",
+    debug: false,
     loaded: (posthog) => {
       // Capture app initialization event
       posthog.capture("app_initialized", {
