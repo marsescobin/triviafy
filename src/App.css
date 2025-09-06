@@ -451,6 +451,25 @@ body {
   transform: translateY(-2px);
 }
 
+/* Mobile input styling - prevent zoom and improve usability */
+@media (max-width: 768px) {
+  .form-guess input {
+    font-size: 16px; /* Prevents zoom on iOS */
+    padding: 1rem 1.5rem;
+    max-width: 100%;
+  }
+
+  .auth-form input {
+    font-size: 16px; /* Prevents zoom on iOS */
+    padding: 1rem 1.25rem;
+  }
+
+  .custom-topic-input {
+    font-size: 16px; /* Prevents zoom on iOS */
+    padding: 1rem 1.25rem;
+  }
+}
+
 .form-guess button {
   background-color: #222222;
   color: white;
@@ -665,9 +684,15 @@ body {
   }
 
   .letter-tile {
-    width: 50px;
-    height: 50px;
-    font-size: 1.2rem;
+    width: 60px;
+    height: 60px;
+    font-size: 1.4rem;
+  }
+
+  .punctuation-tile {
+    width: 60px;
+    height: 60px;
+    font-size: 1.4rem;
   }
 
   .header {
@@ -699,6 +724,120 @@ body {
 
   .logo {
     font-size: 1.3rem;
+  }
+}
+
+/* Small phones */
+@media (max-width: 414px) {
+  .header {
+    padding: 0.5rem;
+    margin: 0 0.25rem;
+    font-size: 1.1rem;
+  }
+
+  .nav {
+    gap: 0.5rem;
+  }
+
+  .nav-link {
+    font-size: 0.85rem;
+    padding: 0.4rem 0.6rem;
+  }
+
+  .logo {
+    font-size: 1.2rem;
+  }
+
+  .letter-tile {
+    width: 55px;
+    height: 55px;
+    font-size: 1.3rem;
+  }
+
+  .punctuation-tile {
+    width: 55px;
+    height: 55px;
+    font-size: 1.3rem;
+  }
+
+  .form-guess h2 {
+    font-size: 2rem;
+  }
+
+  .headline {
+    font-size: 2.5rem;
+  }
+}
+
+/* Very small phones */
+@media (max-width: 320px) {
+  .header {
+    padding: 0.4rem;
+    margin: 0 0.1rem;
+    font-size: 1rem;
+  }
+
+  .nav {
+    gap: 0.4rem;
+  }
+
+  .nav-link {
+    font-size: 0.8rem;
+    padding: 0.3rem 0.5rem;
+  }
+
+  .logo {
+    font-size: 1.1rem;
+  }
+
+  .letter-tile {
+    width: 50px;
+    height: 50px;
+    font-size: 1.2rem;
+  }
+
+  .punctuation-tile {
+    width: 50px;
+    height: 50px;
+    font-size: 1.2rem;
+  }
+
+  .form-guess h2 {
+    font-size: 1.8rem;
+  }
+
+  .headline {
+    font-size: 2.2rem;
+  }
+
+  .word-tiles {
+    gap: 0.5rem;
+  }
+}
+
+/* Touch-friendly interactions - replace hover with active states */
+@media (hover: none) and (pointer: coarse) {
+  .btn:hover,
+  .nav-link:hover,
+  .topic-item:hover,
+  .session-card:hover,
+  .letter-tile:hover,
+  .punctuation-tile:hover {
+    transform: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  .btn:active,
+  .nav-link:active,
+  .topic-item:active,
+  .session-card:active {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+  }
+
+  .letter-tile:active,
+  .punctuation-tile:active {
+    transform: scale(1.05);
   }
 }
 
@@ -1681,6 +1820,91 @@ body {
   font-weight: 500;
 }
 
+/* TopicForm mobile improvements */
+@media (max-width: 768px) {
+  .topic-form-container {
+    padding: 1.5rem;
+    max-width: 100%;
+  }
+
+  .topic-form-container h2 {
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .topics-list {
+    gap: 0.75rem;
+    margin-bottom: 2rem;
+  }
+
+  .topic-item {
+    padding: 1rem 1.5rem;
+    font-size: 1.1rem;
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .custom-topic-button {
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    min-height: 48px;
+  }
+
+  .custom-topic-input {
+    font-size: 16px;
+    padding: 1rem 1.25rem;
+    min-height: 48px;
+  }
+
+  .custom-topic-buttons {
+    gap: 0.75rem;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .submit-topic-btn,
+  .cancel-topic-btn {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    min-height: 48px;
+    width: 100%;
+  }
+
+  .form-guess button {
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    min-height: 48px;
+  }
+
+  .auth-form button {
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    min-height: 48px;
+  }
+}
+
+@media (max-width: 480px) {
+  .topic-form-container {
+    padding: 1rem;
+  }
+
+  .topic-form-container h2 {
+    font-size: 1.6rem;
+  }
+
+  .topic-item {
+    padding: 0.875rem 1.25rem;
+    font-size: 1rem;
+  }
+
+  .custom-topic-button {
+    padding: 0.875rem 1.5rem;
+    font-size: 1rem;
+  }
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .history-page h1 {
@@ -1701,11 +1925,45 @@ body {
     align-items: flex-start;
     gap: 1rem;
     padding: 1.25rem;
+    min-height: 80px;
   }
 
   .session-header {
     width: 100%;
     justify-content: space-between;
+  }
+
+  .session-topic {
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
+
+  .session-date {
+    font-size: 0.9rem;
+  }
+
+  .session-score {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .score-text {
+    font-size: 1rem;
+  }
+
+  .question-item {
+    padding: 1rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .question-text {
+    font-size: 1rem;
+    line-height: 1.4;
+    margin-bottom: 0.5rem;
+  }
+
+  .question-answer {
+    font-size: 0.9rem;
   }
 
   .session-score {
