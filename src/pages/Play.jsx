@@ -16,6 +16,11 @@ export default function Play() {
   const [guessThisWord, setGuessThisWord] = useState(
     word.split("").map(() => "_ ")
   );
+
+  // Helper function to detect punctuation
+  function isPunctuation(char) {
+    return /[.,!?;:'"()[\]{}-]/.test(char);
+  }
   const [randomIndexes, setRandomIndexes] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   // Add error state
@@ -117,6 +122,8 @@ export default function Play() {
       for (let i = 0; i < newWord.length; i++) {
         if (newWord[i] === " ") {
           guessArray.push(" "); // Space for word separator
+        } else if (isPunctuation(newWord[i])) {
+          guessArray.push(newWord[i]); // Preserve punctuation
         } else {
           guessArray.push("_ "); // Underscore for letter
         }

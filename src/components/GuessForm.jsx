@@ -1,5 +1,6 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import PropTypes from "prop-types";
+import { EyeClosed, Eye } from "lucide-react";
 import "../App.css";
 import Hearts from "./Hearts";
 import CelebrationConfetti from "./Confetti";
@@ -65,14 +66,27 @@ export default function GuessForm({
     if (remainingLives <= 1 && !showRanOutOfHearts && !showCelebration) {
       console.log("Hearts reached 0, triggering ran out of hearts");
       setShowRanOutOfHearts(true);
-      revealFullAnswer();
+
+      // Create the fully revealed word directly here
+      const fullyRevealed = word.split("").map((char) => {
+        if (char === " ") return " ";
+        if (isPunctuation(char)) return char; // Keep punctuation as-is
+        return char.toUpperCase();
+      });
+      setRevealedWord(fullyRevealed);
 
       // Track ran out of hearts
       if (onRanOutOfHearts) {
         onRanOutOfHearts();
       }
     }
-  }, [remainingLives, showRanOutOfHearts, showCelebration]);
+  }, [
+    remainingLives,
+    showRanOutOfHearts,
+    showCelebration,
+    word,
+    onRanOutOfHearts,
+  ]);
 
   // Helper function to detect punctuation
   function isPunctuation(char) {
@@ -87,16 +101,17 @@ export default function GuessForm({
     }));
   }
 
-  function revealFullAnswer() {
+  const revealFullAnswer = useCallback(() => {
     // Create the fully revealed word
     const fullyRevealed = word.split("").map((char) => {
       if (char === " ") return " ";
+      if (isPunctuation(char)) return char; // Keep punctuation as-is
       return char.toUpperCase();
     });
 
     // Update the revealed word state
     setRevealedWord(fullyRevealed);
-  }
+  }, [word]);
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -160,7 +175,8 @@ export default function GuessForm({
   }
 
   function handleRevealAnswer() {
-    // Call the parent's reveal answer function
+    // When user clicks reveal, trigger the "ran out of hearts" flow
+    // This means they're giving up and should lose all hearts
     if (onRevealAnswer) {
       onRevealAnswer();
     }
@@ -170,8 +186,15 @@ export default function GuessForm({
     <form onSubmit={handleSubmit} className="form-guess">
       <h2>{question}</h2>
 
-      {/* Hearts component - placed below question, above tiles */}
-      <Hearts totalLives={totalLives} remainingLives={remainingLives} />
+      {/* Hearts component or ran out message - placed below question, above tiles */}
+      {showRanOutOfHearts ? (
+        <div className="ran-out-of-hearts-message">
+          <h3 className="ran-out-message">Ran out of hearts!!</h3>
+          <p className="answer-message">The answer was: {word}</p>
+        </div>
+      ) : (
+        <Hearts totalLives={totalLives} remainingLives={remainingLives} />
+      )}
 
       <div className="word-tiles" ref={wordTilesRef}>
         {revealedWord.map((letter, index) => {
@@ -197,7 +220,7 @@ export default function GuessForm({
           if (isPunctuation(letter)) {
             return (
               <span key={index} className="punctuation-tile">
-                {/* Empty tile - punctuation to be guessed */}
+                {letter}
               </span>
             );
           }
@@ -231,7 +254,7 @@ export default function GuessForm({
         }
       />
 
-      {/* Show celebration, ran out of hearts, or input form */}
+      {/* Show celebration or input form */}
       {showCelebration ? (
         <div className="celebration-container">
           <h3 className="celebration-message">{celebrationMessage}</h3>
@@ -243,41 +266,55 @@ export default function GuessForm({
             Next Question
           </button>
         </div>
-      ) : showRanOutOfHearts ? (
-        <div className="ran-out-of-hearts-container">
-          <h3 className="ran-out-message">Ran out of hearts!!</h3>
-          <p className="answer-message">The answer was: {word}</p>
-          <button
-            type="button"
-            className="next-question-btn"
-            onClick={handleNextQuestionAfterHeartsOut}
-          >
-            Next Question
-          </button>
-        </div>
       ) : (
         <>
-          <input
-            className="input--guess"
-            name="guess"
-            onChange={handleChange}
-            value={formData.guess}
-            placeholder="Enter your answer"
-            autoFocus
-            disabled={remainingLives <= 0}
-          />
-          <div className="form-buttons">
-            <button type="submit" disabled={remainingLives <= 0}>
-              Submit
-            </button>
-            <button
-              type="button"
-              className="reveal-answer-btn"
-              onClick={handleRevealAnswer}
+          {/* Input field - hide when revealed */}
+          {!showRanOutOfHearts && (
+            <input
+              className="input--guess"
+              name="guess"
+              onChange={handleChange}
+              value={formData.guess}
+              placeholder="Enter your answer"
+              autoFocus
               disabled={remainingLives <= 0}
-            >
-              Reveal Answer
-            </button>
+            />
+          )}
+
+          <div className="form-buttons">
+            {/* Submit button - hide when revealed */}
+            {!showRanOutOfHearts && (
+              <button type="submit" disabled={remainingLives <= 0}>
+                Submit
+              </button>
+            )}
+
+            {/* Next Question button - show when revealed */}
+            {showRanOutOfHearts && (
+              <button
+                type="button"
+                className="next-question-btn"
+                onClick={handleNextQuestionAfterHeartsOut}
+              >
+                Next Question
+              </button>
+            )}
+            {/* Eye icon - always visible, not wrapped in button */}
+            <div className="eye-icon-container">
+              {showRanOutOfHearts ? (
+                <Eye size={20} className="eye-icon" />
+              ) : (
+                <EyeClosed
+                  size={20}
+                  className="eye-icon"
+                  onClick={!showRanOutOfHearts ? handleRevealAnswer : undefined}
+                  style={{
+                    cursor: !showRanOutOfHearts ? "pointer" : "default",
+                  }}
+                  aria-label="Reveal answer (give up)"
+                />
+              )}
+            </div>
           </div>
         </>
       )}

@@ -415,7 +415,7 @@ body {
   padding: 3rem;
   margin: 0 auto;
   width: 100%;
-  max-width: 600px;
+  max-width: 85%;
 }
 
 .form-guess h2 {
@@ -464,6 +464,52 @@ body {
   background-color: #444444;
   transform: translateY(-3px);
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+}
+
+/* Eye icon styling */
+.eye-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  min-width: 3rem;
+  height: 3rem;
+  color: #222222;
+}
+
+.eye-icon:hover svg {
+  transform: scale(1.1);
+}
+
+.eye-icon-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Ran out of hearts message in hearts position */
+.ran-out-of-hearts-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 1rem 0;
+  text-align: center;
+}
+
+.ran-out-of-hearts-message .ran-out-message {
+  color: #e74c3c;
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.ran-out-of-hearts-message .answer-message {
+  color: #222222;
+  font-size: 1rem;
+  font-weight: 500;
 }
 
 /* Login Page Styles - Updated to match app design */
@@ -799,12 +845,14 @@ body {
   width: 100%;
   max-width: 400px;
   padding: 1rem 1.5rem;
-  border: 2px solid #222222;
+  border: 3px solid #222222;
   border-radius: 12px;
   font-size: 1.1rem;
   font-weight: 500;
   outline: none;
   transition: all 0.3s ease;
+  background-color: white;
+  color: #222222;
 }
 
 .custom-topic-input:focus {
@@ -1020,8 +1068,6 @@ body {
   justify-content: center;
   align-items: center;
   gap: 1rem;
-  margin: 1.5rem 0;
-  padding: 1rem;
 }
 
 .heart-wrapper {
@@ -1175,7 +1221,6 @@ body {
   border-radius: 20px;
   margin: 2rem auto;
   max-width: 500px;
-  border: 2px solid #222222;
 }
 
 .game-complete-container h2 {
