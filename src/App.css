@@ -1921,21 +1921,28 @@ body {
   }
 
   .session-card {
-    flex-direction: column;
-    align-items: flex-start;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    justify-content: flex-start !important;
     gap: 1rem;
     padding: 1.25rem;
     min-height: 80px;
   }
 
   .session-header {
-    width: 100%;
-    justify-content: space-between;
+    display: flex !important;
+    width: 100% !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    margin: 0 !important;
+    flex: none !important;
   }
 
   .session-topic {
     font-size: 1.1rem;
     font-weight: 600;
+    min-width: auto !important;
   }
 
   .session-date {
@@ -1943,8 +1950,12 @@ body {
   }
 
   .session-score {
-    width: 100%;
-    justify-content: space-between;
+    display: flex !important;
+    width: 100% !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    min-width: auto !important;
+    gap: 0.75rem;
   }
 
   .score-text {
@@ -1966,20 +1977,106 @@ body {
     font-size: 0.9rem;
   }
 
-  .session-score {
-    width: 100%;
-    justify-content: flex-start;
+  .session-details {
+    padding: 1rem;
+    margin-top: 1rem;
+  }
+
+  .session-details h4 {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+  }
+
+  .questions-list {
+    gap: 0.75rem;
+  }
+
+  .history-page .main-content {
+    padding: 1rem;
+  }
+
+  .sessions-list {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 1rem !important;
+  }
+
+  .history-page .main-content {
+    padding: 1rem !important;
+    max-width: 100% !important;
+  }
+
+  .history-container {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}
+
+/* Additional mobile improvements for smaller screens */
+@media (max-width: 480px) {
+  .history-page h1 {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .session-card {
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .session-topic {
+    font-size: 1rem;
     min-width: auto;
   }
 
-  .session-details {
-    padding: 1.5rem;
+  .session-date {
+    font-size: 0.8rem;
+    padding: 0.4rem 0.8rem;
   }
 
-  .session-details h3 {
-    font-size: 1.5rem;
+  .score-emoji {
+    font-size: 1.2rem;
   }
 
+  .score-text {
+    font-size: 0.9rem;
+  }
+
+  .question-item {
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .question-text {
+    font-size: 0.9rem;
+  }
+
+  .question-answer {
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 320px) {
+  .history-page h1 {
+    font-size: 1.8rem;
+  }
+
+  .session-card {
+    padding: 0.75rem;
+  }
+
+  .session-topic {
+    font-size: 0.9rem;
+  }
+
+  .session-date {
+    font-size: 0.75rem;
+    padding: 0.3rem 0.6rem;
+  }
+}
+
+/* Auth required and no history mobile styling */
+@media (max-width: 768px) {
   .auth-required,
   .no-history {
     padding: 2rem;
