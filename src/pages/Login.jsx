@@ -96,11 +96,7 @@ export default function Login() {
               <button type="submit" disabled={loading}>
                 {loading ? "Verifying..." : "Verify OTP"}
               </button>
-              <button
-                type="button"
-                onClick={() => setIsOtpSent(false)}
-                className="back-btn"
-              >
+              <button type="button" onClick={() => setIsOtpSent(false)}>
                 Back to Email
               </button>
             </form>
