@@ -1,9 +1,12 @@
 import { Link } from "react-router-dom";
 import { motion } from "motion/react";
 import Navigation from "../components/Navigation.jsx";
+import { useAuth } from "../contexts/AuthContext";
 import "../App.css";
 
 export default function Home() {
+  const { user } = useAuth();
+
   const wordGameLetters = [
     { letter: "W", delay: 0 },
     { letter: "O", delay: 0.1 },
@@ -57,9 +60,12 @@ export default function Home() {
           <Link to="/play" className="btn btn-primary">
             Start playing
           </Link>
-          <Link to="/login" className="btn btn-secondary">
-            Sign up
-          </Link>
+
+          {!user && (
+            <Link to="/login" className="btn btn-secondary">
+              Sign up
+            </Link>
+          )}
         </div>
       </main>
 
