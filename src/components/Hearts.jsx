@@ -57,12 +57,13 @@ function Heart({ isAlive, isBreaking, delay = 0 }) {
           <motion.div
             className="heart-full"
             animate={{
-              scale: [1, 1.1, 1],
+              scale: [1, 1.05, 1],
             }}
             transition={{
-              duration: 0.6,
+              duration: 0.8,
               repeat: Infinity,
               repeatType: "reverse",
+              delay: 0,
             }}
           >
             ♥️
@@ -89,7 +90,7 @@ function BreakingHeart() {
         initial={{ opacity: 1 }}
         animate={{
           opacity: [1, 1, 0.8, 0.6, 0.4, 0.2, 0],
-          scale: [1, 1, 1.05, 1.1, 1.15, 1.2, 0],
+          scale: [1, 1, 1.02, 1.05, 1.08, 1.1, 0],
           rotate: [0, 0, 5, -5, 10, -10, 0],
         }}
         transition={{
