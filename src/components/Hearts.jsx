@@ -89,7 +89,7 @@ function BreakingHeart() {
         initial={{ opacity: 1 }}
         animate={{
           opacity: [1, 1, 0.8, 0.6, 0.4, 0.2, 0],
-          scale: [1, 1, 1.1, 1.2, 1.3, 1.4, 0],
+          scale: [1, 1, 1.05, 1.1, 1.15, 1.2, 0],
           rotate: [0, 0, 5, -5, 10, -10, 0],
         }}
         transition={{
@@ -122,4 +122,10 @@ Hearts.propTypes = {
   totalLives: PropTypes.number.isRequired,
   remainingLives: PropTypes.number.isRequired,
   onGameOver: PropTypes.func,
+};
+
+Heart.propTypes = {
+  isAlive: PropTypes.bool.isRequired,
+  isBreaking: PropTypes.bool.isRequired,
+  delay: PropTypes.number,
 };

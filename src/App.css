@@ -288,10 +288,12 @@ body {
 .word-tiles {
   display: flex;
   gap: 0.5rem;
-  justify-content: center;
+  justify-content: flex-start;
   flex-wrap: wrap;
   max-width: 100%;
   padding: 0 1rem;
+  margin: 0 auto;
+  width: fit-content;
 }
 
 .letter-tile {
@@ -1311,6 +1313,7 @@ body {
   flex-wrap: wrap;
   max-width: 100%;
   padding: 0 1rem;
+  margin: 1.5rem 0 1rem 0;
 }
 
 .heart-wrapper {
@@ -1336,13 +1339,13 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  width: 35px;
+  height: 35px;
 }
 
 .heart-with-crack {
   position: relative;
-  font-size: 2rem;
+  font-size: 1.8rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1408,6 +1411,11 @@ body {
     height: 30px;
   }
 
+  .breaking-heart {
+    width: 30px;
+    height: 30px;
+  }
+
   .heart-full,
   .heart-with-crack {
     font-size: 1.5rem;
@@ -1429,6 +1437,11 @@ body {
     height: 28px;
   }
 
+  .breaking-heart {
+    width: 28px;
+    height: 28px;
+  }
+
   .heart-full,
   .heart-with-crack {
     font-size: 1.3rem;
@@ -1446,6 +1459,11 @@ body {
   }
 
   .heart-wrapper {
+    width: 25px;
+    height: 25px;
+  }
+
+  .breaking-heart {
     width: 25px;
     height: 25px;
   }
