@@ -89,9 +89,9 @@ export default function Login() {
                 id="otp"
                 value={otp}
                 onChange={(e) => setOtp(e.target.value)}
-                placeholder="Enter the 6-digit code from your email"
+                placeholder="Enter the code from your email"
                 required
-                maxLength="6"
+                maxLength="8"
               />
               <button type="submit" disabled={loading}>
                 {loading ? "Verifying..." : "Verify OTP"}
